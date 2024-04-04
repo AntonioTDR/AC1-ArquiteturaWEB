@@ -9,33 +9,28 @@ import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-
 @RestController
 @RequestMapping("/api/students")
 
 public class StudentController {
+    private final StudentService studentService;
 
-    private Map<Integer, Student> studentsMap = new HashMap<>();
-
-    public StudentController() {
-        studentsMap.put(1, new Student(1, "AlunoA", "Zagueiro"));
-        studentsMap.put(2, new Student(2, "AlunoB", "Lugano"));
-        studentsMap.put(3, new Student(3, "AlunoC", "Arboleda"));
+    public StudentController(StudentService studentService) {
+        this.studentService = studentService;
     }
 
-    @GetMapping("/students")
+    @GetMapping
     public List<Student> getAllStudents() {
-        return new ArrayList<>(studentsMap.values());
+        return studentService.getAllStudents();
     }
 
-    @GetMapping("/students/{id}")
-    public Student getStudentById(@PathVariable int id) {
-        return studentsMap.getOrDefault(id, new Student(-1, "Aluno Inválido"));
+    @GetMapping("/{id}")
+    public Student getStudentById(@PathVariable Long id) {
+        return studentService.getStudentById(id);
     }
 
-    @PostMapping("/students")
-    public void createStudent(@RequestBody Student student) {
-        studentsMap.put(student.getId(), student);
-        System.out.println("Aluno: " + student.getName() + " adicionado com sucesso!");
+    @PostMapping("/add")
+    public Student createStudent(@RequestBody Student student) {
+        return studentService.createStudent(student);
     }
 }
